@@ -27,23 +27,23 @@ public class AuthController {
     private final AuthRepository authRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-//    private final AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     private final AuthService authService;
 
 
-//    @PostMapping("/login")
-//    public HttpEntity<?> login(@RequestBody ReqLogin request) {
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(request.getPhoneNumber(), request.getPassword())
-//        );
-//        User user = authRepository.findUserByPhoneNumber(request.getPhoneNumber()).get();
-//        ResToken resToken = new ResToken(generateToken(request.getPhoneNumber()));
-//        if (user.getRole().getRoleName().equals(RoleName.PUPIL)) {
-//            return ResponseEntity.ok(getmalumot(user, resToken, "/auth/user"));
-//        }
-//        return ResponseEntity.ok(getmalumot(user, resToken, "/auth/admin"));
-//    }
+    @PostMapping("/login")
+    public HttpEntity<?> login(@RequestBody ReqLogin request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getPhoneNumber(), request.getPassword())
+        );
+        User user = authRepository.findUserByPhoneNumber(request.getPhoneNumber()).get();
+        ResToken resToken = new ResToken(generateToken(request.getPhoneNumber()));
+        if (user.getRole().getRoleName().equals(RoleName.PUPIL)) {
+            return ResponseEntity.ok(getmalumot(user, resToken, "/auth/user"));
+        }
+        return ResponseEntity.ok(getmalumot(user, resToken, "/auth/admin"));
+    }
 
 
 

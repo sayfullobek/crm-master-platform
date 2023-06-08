@@ -1,7 +1,8 @@
 package uTeamCrm.Crmmasterplatform.entity.template;
 
-import jakarta.persistence.*;
 import lombok.Data;
+
+import javax.persistence.*;
 
 @Data
 @MappedSuperclass

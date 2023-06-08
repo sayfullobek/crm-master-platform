@@ -1,8 +1,9 @@
 package uTeamCrm.Crmmasterplatform.entity;
 
-import jakarta.persistence.Entity;
 import lombok.*;
 import uTeamCrm.Crmmasterplatform.entity.template.AbsWallet;
+
+import javax.persistence.Entity;
 
 @Getter
 @Setter

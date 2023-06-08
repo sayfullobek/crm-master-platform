@@ -1,12 +1,12 @@
 package uTeamCrm.Crmmasterplatform.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import uTeamCrm.Crmmasterplatform.entity.enums.ConditionName;
 import uTeamCrm.Crmmasterplatform.entity.template.AbsEntity;
 
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;

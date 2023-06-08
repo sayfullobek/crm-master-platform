@@ -1,10 +1,10 @@
 package uTeamCrm.Crmmasterplatform.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
 import uTeamCrm.Crmmasterplatform.entity.enums.DayType;
 import uTeamCrm.Crmmasterplatform.entity.template.AbsEntity;
 
+import javax.persistence.*;
 import java.util.List;
 
 @Getter

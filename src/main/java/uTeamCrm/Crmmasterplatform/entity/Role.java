@@ -1,6 +1,5 @@
 package uTeamCrm.Crmmasterplatform.entity;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import uTeamCrm.Crmmasterplatform.entity.enums.RoleName;
+
+import javax.persistence.*;
 
 @Getter
 @AllArgsConstructor

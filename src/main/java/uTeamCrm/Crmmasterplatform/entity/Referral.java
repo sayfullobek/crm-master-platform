@@ -1,9 +1,10 @@
 package uTeamCrm.Crmmasterplatform.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import lombok.*;
 import uTeamCrm.Crmmasterplatform.entity.template.AbsEntity;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 @Getter
 @Setter

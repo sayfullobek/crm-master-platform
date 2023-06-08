@@ -1,8 +1,9 @@
 package uTeamCrm.Crmmasterplatform.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
 import uTeamCrm.Crmmasterplatform.entity.enums.WeekDayName;
+
+import javax.persistence.*;
 
 @Getter
 @Setter
