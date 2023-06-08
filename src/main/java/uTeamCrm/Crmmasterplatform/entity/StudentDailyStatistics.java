@@ -1,0 +1,23 @@
+package uTeamCrm.Crmmasterplatform.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import lombok.*;
+import uTeamCrm.Crmmasterplatform.entity.template.AbsEntity;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Entity
+public class StudentDailyStatistics extends AbsEntity {
+    @Column
+    private boolean todayActive;//bugun darsga keldimi
+
+    @Column
+    private Integer dailyPercentage;//kunlik 0 foizdan 100 foizgacha baholash
+
+    @Column
+    private Double dailyFee; //har darsda to'laydigan summasi
+}
