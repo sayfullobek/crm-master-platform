@@ -19,7 +19,7 @@ public class PaymentHistory extends AbsEntity {
     private Double howMuch; // qancha to'lov qildi
 
     @Column
-    private Date when; // qachon to'lov qildi
+    private Date howTime; // qachon to'lov qildi
 
     @Enumerated(value = EnumType.STRING)
     private PayTypeName payTypeName; // To'lov turi

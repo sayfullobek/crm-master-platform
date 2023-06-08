@@ -16,7 +16,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-@RequiredArgsConstructor
 public class Academy extends AbsEntity implements UserDetails {
     @Column(nullable = false, name = "academy_name")
     private String name; //academy nomi

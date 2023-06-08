@@ -17,7 +17,7 @@ import uTeamCrm.Crmmasterplatform.entity.enums.RoleName;
 @RequiredArgsConstructor
 public class DataLoader implements CommandLineRunner {
 
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
 
     private final AuthRepository authRepository;
 
@@ -34,14 +34,14 @@ public class DataLoader implements CommandLineRunner {
             for (RoleName value : RoleName.values()) {
                 roleRepo.save(new Role(value));
             }
-            Role role = roleRepo.findById(2).get();
-            authRepository.save(
-                    new User(
-                            "userjon",
-                            "userbek",
-                            "980009792",
-                            passwordEncoder.encode("0009792"),
-                            role));
+//            Role role = roleRepo.findById(2).get();
+//            authRepository.save(
+//                    new User(
+//                            "userjon",
+//                            "userbek",
+//                            "980009792",
+//                            passwordEncoder.encode("0009792"),
+//                            role));
         }
     }
 }

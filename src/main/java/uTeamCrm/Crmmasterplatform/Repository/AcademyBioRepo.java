@@ -2,9 +2,10 @@ package uTeamCrm.Crmmasterplatform.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import uTeamCrm.Crmmasterplatform.entity.AcademyBio;
 
 import java.util.UUID;
 
 @CrossOrigin
-public interface AcademyBioRepo extends JpaRepository<AcademyRepo, UUID> {
+public interface AcademyBioRepo extends JpaRepository<AcademyBio, UUID> {
 }

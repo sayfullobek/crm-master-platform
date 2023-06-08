@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
+@Entity(name = "groups")
 public class Group extends AbsEntity { //guruhlar
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "academy_in_group",
