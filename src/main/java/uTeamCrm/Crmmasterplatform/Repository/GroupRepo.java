@@ -1,4 +1,9 @@
 package uTeamCrm.Crmmasterplatform.Repository;
 
-public interface GroupRepo {
+import org.springframework.data.jpa.repository.JpaRepository;
+import uTeamCrm.Crmmasterplatform.entity.Group;
+
+import java.util.UUID;
+
+public interface GroupRepo extends JpaRepository<Group, UUID> {
 }
