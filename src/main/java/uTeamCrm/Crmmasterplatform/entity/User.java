@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.locks.Condition;
 
 @Getter
 @Setter
@@ -49,8 +50,9 @@ public class User extends AbsEntity implements UserDetails {
     @ManyToOne(optional = false)
     private Role role; //user roli
 
-    @Enumerated(value = EnumType.STRING)
-    private ConditionName conditionName; //o'quvchining holati
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Condtion condition; //o'quvchining holati
+
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_course",
@@ -78,11 +80,11 @@ public class User extends AbsEntity implements UserDetails {
         return userName;
     }
 
-    public User(String name, String userSurname, String phoneNumber, String userPassword, Role role) {
+    public User(String name, String userSurname, String phoneNumber, Role role, Condtion conditionName){
         this.name = name;
         this.userSurname = userSurname;
         this.phoneNumber = phoneNumber;
-        this.userPassword = userPassword;
         this.role = role;
+        this.condition = conditionName;
     }
 }

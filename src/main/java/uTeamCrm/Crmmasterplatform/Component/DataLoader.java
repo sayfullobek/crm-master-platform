@@ -7,9 +7,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import uTeamCrm.Crmmasterplatform.Repository.AuthRepository;
+import uTeamCrm.Crmmasterplatform.Repository.ConditionRepository;
 import uTeamCrm.Crmmasterplatform.Repository.RoleRepository;
+import uTeamCrm.Crmmasterplatform.entity.Condtion;
 import uTeamCrm.Crmmasterplatform.entity.Role;
 import uTeamCrm.Crmmasterplatform.entity.User;
+import uTeamCrm.Crmmasterplatform.entity.enums.ConditionName;
 import uTeamCrm.Crmmasterplatform.entity.enums.RoleName;
 
 @Component
@@ -23,6 +26,7 @@ public class DataLoader implements CommandLineRunner {
 
     private final RoleRepository roleRepo;
 
+    private final ConditionRepository conditionRepository;
 
     @Value("${spring.jpa.hibernate.ddl-auto}")
     private String init;
@@ -34,14 +38,9 @@ public class DataLoader implements CommandLineRunner {
             for (RoleName value : RoleName.values()) {
                 roleRepo.save(new Role(value));
             }
-            Role role = roleRepo.findById(2).get();
-            authRepository.save(
-                    new User(
-                            "userjon",
-                            "userbek",
-                            "980009792",
-                            passwordEncoder.encode("0009792"),
-                            role));
+            for (ConditionName value : ConditionName.values()) {
+                conditionRepository.save(new Condtion(value));
+            }
         }
     }
 }
