@@ -29,7 +29,7 @@ public class Definition extends AbsEntity { //tariflar
     private Double sale; //ushbu tarifning referral codi chegirmasi
 
     @Column(nullable = false)
-    private Integer HowManyAcademyReferrals; //nechta academiyani referali orqali kirita olishi
+    private Integer howManyAcademyReferrals; //nechta academiyani referali orqali kirita olishi
 
     @Column(nullable = false)
     private Integer howMonthSale; //referal orqali kirgan academiya uchun necha oy chegirma bolishi

@@ -1,8 +1,6 @@
 package uTeamCrm.Crmmasterplatform.entity;
 
 import lombok.*;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import uTeamCrm.Crmmasterplatform.entity.template.AbsEntity;
 import uTeamCrm.Crmmasterplatform.entity.template.AbsNameEntity;
 
 import javax.persistence.*;
