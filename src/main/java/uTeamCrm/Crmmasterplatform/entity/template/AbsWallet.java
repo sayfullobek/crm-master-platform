@@ -14,8 +14,8 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class AbsWallet extends AbsEntity {
 
-    private Double monthlyProfit;
+    private Double monthlyProfit; // o'qituvchinik ushbu oydagi olgan puli
 
-    private Double allProfit;
+    private Double allProfit; // o'
 
 }

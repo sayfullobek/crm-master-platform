@@ -11,6 +11,7 @@ import uTeamCrm.Crmmasterplatform.pyload.ReqPupil;
 import uTeamCrm.Crmmasterplatform.service.PupilService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/pupil")
@@ -32,5 +33,12 @@ public class PupilController {
         ApiResponse apiResponse = pupilService.addNewPupil(reqPupil);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
+
+    @PutMapping("/newpupil")
+    public HttpEntity<?> changeCondition(@RequestParam(name = "pupilId")UUID uuid, @RequestParam(name = "id") Integer id){
+        ApiResponse apiResponse = pupilService.changeCondition(uuid, id);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+    }
+
 
 }

@@ -3,6 +3,7 @@ package uTeamCrm.Crmmasterplatform.service;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.hql.internal.classic.AbstractParameterInformation;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uTeamCrm.Crmmasterplatform.Repository.AuthRepository;
 import uTeamCrm.Crmmasterplatform.Repository.ConditionRepository;
@@ -17,6 +18,7 @@ import uTeamCrm.Crmmasterplatform.pyload.ReqPupil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +45,7 @@ public class PupilService {
                         .build();
                 pupilDtos.add(build);
             }
+            return null;
         }
         return pupilDtos;
     }
@@ -55,7 +58,15 @@ public class PupilService {
         return new ApiResponse("saqlandi", true);
     }
 
-//    public User addRealPupil(){
+    public ApiResponse changeCondition(UUID uuid, Integer id){
+        Condtion getCondition = conditionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("getCondition"));
+        User getUser = authRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("getUser"));
+        getUser.setCondition(getCondition);
+        authRepository.save(getUser);
+        return new ApiResponse("change to" + getCondition.getConditionName().name(), true);
+    }
+
+//    public User addRealPupil(ReqPupil reqPupil){
 //
 //    }
 }
