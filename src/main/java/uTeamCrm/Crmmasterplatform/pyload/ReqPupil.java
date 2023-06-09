@@ -14,5 +14,6 @@ public class ReqPupil {
     private String  surname;
     private String phoneNumber;
     private Integer conditionId;
-
+    private String userName;
+    private String password;
 }
