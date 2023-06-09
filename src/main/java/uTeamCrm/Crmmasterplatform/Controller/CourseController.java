@@ -30,7 +30,7 @@ public class CourseController {
         }
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
 
     public HttpEntity<?> getOneCourse( @PathVariable Integer id) {
         try {
@@ -57,7 +57,7 @@ public class CourseController {
         return ResponseEntity.ok(new ApiResponse("saqlandi", true));
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public HttpEntity<?> editCourse(@PathVariable Integer id,@RequestParam(name = "uzName") String uzName , @RequestParam(name = "ruName") String ruName, @RequestParam(name = "coursePrice") Double coursePrice, @RequestParam(name = "courseDuration") Double courseDuration, @RequestParam(name = "description") String description) {
         Course course = courseRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("getCourse"));
         course.setCourseDuration(courseDuration);
@@ -69,7 +69,7 @@ public class CourseController {
         return ResponseEntity.ok(new ApiResponse("saqlandi",true));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public HttpEntity<?> deletCourse(@PathVariable Integer id) {
         ApiResponse apiResponse = courseServise.deleteCourse(id);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
