@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import uTeamCrm.Crmmasterplatform.entity.Condtion;
 import uTeamCrm.Crmmasterplatform.entity.Course;
 import uTeamCrm.Crmmasterplatform.entity.Role;
-import uTeamCrm.Crmmasterplatform.entity.enums.ConditionName;
-
 import java.util.List;
 import java.util.UUID;
 

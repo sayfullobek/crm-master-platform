@@ -2,21 +2,23 @@ package uTeamCrm.Crmmasterplatform.service;
 
 import lombok.RequiredArgsConstructor;
 import org.hibernate.hql.internal.classic.AbstractParameterInformation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import uTeamCrm.Crmmasterplatform.Repository.AuthRepository;
-import uTeamCrm.Crmmasterplatform.Repository.ConditionRepository;
-import uTeamCrm.Crmmasterplatform.Repository.RoleRepository;
-import uTeamCrm.Crmmasterplatform.entity.Condtion;
-import uTeamCrm.Crmmasterplatform.entity.Role;
-import uTeamCrm.Crmmasterplatform.entity.User;
+import uTeamCrm.Crmmasterplatform.Repository.*;
+import uTeamCrm.Crmmasterplatform.entity.*;
 import uTeamCrm.Crmmasterplatform.entity.enums.ConditionName;
+import uTeamCrm.Crmmasterplatform.entity.enums.RoleName;
 import uTeamCrm.Crmmasterplatform.pyload.ApiResponse;
 import uTeamCrm.Crmmasterplatform.pyload.PupilDto;
 import uTeamCrm.Crmmasterplatform.pyload.ReqPupil;
+import uTeamCrm.Crmmasterplatform.pyload.SelectDto;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,10 +32,25 @@ public class PupilService {
 
     private final ConditionRepository conditionRepository;
 
-    public List<PupilDto> getNewPupil() {
+    private final CourseRepo courseRepo;
+
+
+    private final AllStaticForPupilRepo allStaticForPupilRepo;
+
+    private final MonthlyStatisticsRepo monthlyStatisticsRepo;
+    private final StudentDailyStatisticsRepo studentDailyStatisticsRepo;
+
+    private final WalletRepo walletRepo;
+
+    @Autowired
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    public List<PupilDto> getNewPupil(String condition) {
         List<PupilDto> pupilDtos = new ArrayList<>();
         for (User user : authRepository.findAll()) {
-            if (!user.getCondition().getConditionName().equals(ConditionName.SUCCESS)) {
+            if (user.getCondition().getConditionName().name().equals(condition)) {
                 PupilDto build = PupilDto.builder()
                         .uuid(user.getId())
                         .name(user.getName())
@@ -45,7 +62,6 @@ public class PupilService {
                         .build();
                 pupilDtos.add(build);
             }
-            return null;
         }
         return pupilDtos;
     }
@@ -58,7 +74,7 @@ public class PupilService {
         return new ApiResponse("saqlandi", true);
     }
 
-    public ApiResponse changeCondition(UUID uuid, Integer id){
+    public ApiResponse changeCondition(UUID uuid, Integer id) {
         Condtion getCondition = conditionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("getCondition"));
         User getUser = authRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("getUser"));
         getUser.setCondition(getCondition);
@@ -66,7 +82,46 @@ public class PupilService {
         return new ApiResponse("change to" + getCondition.getConditionName().name(), true);
     }
 
-//    public User addRealPupil(ReqPupil reqPupil){
-//
+    public ApiResponse addRealPupil(ReqPupil reqPupil) {
+        List<Course> courses = new ArrayList<>();
+        StudentDailyStatistics studentDailyStatistics = StudentDailyStatistics.builder().dailyFee(0.0).todayActive(true).build();
+        MonthlyStatistics monthlyStatistics = MonthlyStatistics.builder().monthlyPayment(0.0).build();
+        AllStatisticForPupil allStatisticForPupil = AllStatisticForPupil.builder().allCost(0.0).studyDuration(0).build();
+        for (SelectDto cours : reqPupil.getCourses()) {
+            Course getCourse = courseRepo.findById(cours.getValue()).orElseThrow(() -> new ResourceNotFoundException("getCourse"));
+            double v = getCourse.getCoursePrice() / 30;
+            studentDailyStatistics.setDailyFee(studentDailyStatistics.getDailyFee() + v);
+            monthlyStatistics.setMonthlyPayment(monthlyStatistics.getMonthlyPayment() + getCourse.getCoursePrice());
+            MonthlyStatistics monthlyStatistics1 = monthlyStatisticsRepo.save(monthlyStatistics);
+            allStatisticForPupil.setAllCost(monthlyStatistics1.getMonthlyPayment() * 12);
+            allStatisticForPupil.setMonthlyStatistics(Collections.singletonList(monthlyStatistics1));
+            courses.add(getCourse);
+        }
+        StudentDailyStatistics studentDailyStatistics1 = studentDailyStatisticsRepo.save(studentDailyStatistics);
+        monthlyStatistics.setStudentDailyStatistics(Collections.singletonList(studentDailyStatistics1));
+        Role getPupil = roleRepository.findById(5).orElseThrow(() -> new ResourceNotFoundException("getPupil"));
+        User user = new User(
+                reqPupil.getName(),
+                reqPupil.getSurname(),
+                reqPupil.getMiddleName(),
+                reqPupil.getPhoneNumber(),
+                reqPupil.getUserName(),
+                passwordEncoder().encode(reqPupil.getPassword()),
+                getPupil,
+                conditionRepository.findById(3).orElseThrow(() -> new ResourceNotFoundException("getRole")),
+                courses
+        );
+        User save = authRepository.save(user);
+        Wallet wallet = Wallet.builder().user(save).build();
+        walletRepo.save(wallet);
+        allStatisticForPupil.setUser(save);
+        allStaticForPupilRepo.save(allStatisticForPupil);
+        return new ApiResponse("saqlandi", true);
+    }
+
+
+//    public ApiResponse keldiKetti(UUID uuid){
+//        User user = authRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("getPupil"));
+//        AllStatisticForPupil allStatisticForPupilByUserId = allStaticForPupilRepo.findAllStatisticForPupilByUserId(user.getId());
 //    }
 }

@@ -15,8 +15,6 @@ import java.util.List;
 @Builder
 @Entity
 public class MonthlyStatistics extends AbsEntity {
-    
-
     @OneToMany
     private List<StudentDailyStatistics> studentDailyStatistics; //kunlik statistikaning ro'yxati
 

@@ -17,5 +17,5 @@ public class TeacherWallet extends AbsWallet {
     private Double monthlyFee;
 
     @OneToOne
-    private User user;
+    private User teacher;
 }

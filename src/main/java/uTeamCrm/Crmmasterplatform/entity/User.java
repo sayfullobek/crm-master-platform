@@ -50,7 +50,7 @@ public class User extends AbsEntity implements UserDetails {
     @ManyToOne(optional = false)
     private Role role; //user roli
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Condtion condition; //o'quvchining holati
 
 
@@ -85,6 +85,18 @@ public class User extends AbsEntity implements UserDetails {
         this.userSurname = userSurname;
         this.phoneNumber = phoneNumber;
         this.role = role;
-        this.condition = conditionName;
+            this.condition = conditionName;
+    }
+
+    public User(String name, String userSurname, String userMiddleName, String phoneNumber, String userName, String userPassword, Role role, Condtion condition, List<Course> courses) {
+        this.name = name;
+        this.userSurname = userSurname;
+        this.userMiddleName = userMiddleName;
+        this.phoneNumber = phoneNumber;
+        this.userName = userName;
+        this.userPassword = userPassword;
+        this.role = role;
+        this.condition = condition;
+        this.courses = courses;
     }
 }

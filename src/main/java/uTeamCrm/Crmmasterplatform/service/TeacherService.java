@@ -78,7 +78,7 @@ public class TeacherService {
         try {
             TeacherWallet build = TeacherWallet.builder()
                     .monthlyFee(monthlyFee)
-                    .user(userByRoleAndId)
+                    .teacher(userByRoleAndId)
                     .build();
             teacherWalletRepo.save(build);
             return new ApiResponse("saqlandi", true);

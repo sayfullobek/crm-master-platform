@@ -1,10 +1,13 @@
 package uTeamCrm.Crmmasterplatform.Controller;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uTeamCrm.Crmmasterplatform.Repository.AuthRepository;
+import uTeamCrm.Crmmasterplatform.entity.User;
+import uTeamCrm.Crmmasterplatform.entity.enums.RoleName;
 import uTeamCrm.Crmmasterplatform.pyload.ApiResponse;
 import uTeamCrm.Crmmasterplatform.pyload.PupilDto;
 import uTeamCrm.Crmmasterplatform.pyload.ReqPupil;
@@ -22,9 +25,27 @@ public class PupilController {
 
     private final PupilService pupilService;
 
-    @GetMapping("/newpupil")
-    public HttpEntity<?> getNewPupil(){
-        List<PupilDto> newPupil = pupilService.getNewPupil();
+    @GetMapping("/newpupil/waiting")
+    public HttpEntity<?> getWaiting(){
+        List<PupilDto> newPupil = pupilService.getNewPupil("WAITING");
+        return ResponseEntity.ok(newPupil);
+    }
+
+    @GetMapping("/newpupil/success")
+    public HttpEntity<?> getSuccess(){
+        List<PupilDto> newPupil = pupilService.getNewPupil("SUCCESS");
+        return ResponseEntity.ok(newPupil);
+    }
+
+    @GetMapping("/newpupil/not")
+    public HttpEntity<?> getNot(){
+        List<PupilDto> newPupil = pupilService.getNewPupil("NOT");
+        return ResponseEntity.ok(newPupil);
+    }
+
+    @GetMapping("/newpupil/request")
+    public HttpEntity<?> getRequest(){
+        List<PupilDto> newPupil = pupilService.getNewPupil("REQUEST");
         return ResponseEntity.ok(newPupil);
     }
 
@@ -41,4 +62,9 @@ public class PupilController {
     }
 
 
+    @PostMapping
+    public HttpEntity<?> addRealPupil(@RequestBody ReqPupil reqPupil){
+        ApiResponse apiResponse = pupilService.addRealPupil(reqPupil);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+    }
 }

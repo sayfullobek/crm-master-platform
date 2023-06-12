@@ -19,6 +19,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/teacher")
 public class TeacherController {
     private final TeacherService teacherService;
     private final AuthRepository authRepository;

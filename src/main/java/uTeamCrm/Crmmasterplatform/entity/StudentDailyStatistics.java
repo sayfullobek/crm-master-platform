@@ -21,4 +21,8 @@ public class StudentDailyStatistics extends AbsEntity {
 
     @Column
     private Double dailyFee; //har darsda to'laydigan summasi
+
+    private String nowDay; //bugungi hafta kuni
+
+    private String nowDate; //bugungi sana
 }
