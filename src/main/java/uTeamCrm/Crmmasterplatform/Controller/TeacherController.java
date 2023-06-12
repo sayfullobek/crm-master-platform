@@ -64,12 +64,12 @@ public class TeacherController {
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/wallet/{id}")
     public HttpEntity<?> getTeacherWallet(@PathVariable UUID id){
         TeacherWallet teacherWallet = teacherWalletRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("get"));
         return ResponseEntity.ok(teacherWallet);
     }
-    @PutMapping("/{id}")
+    @PutMapping("/wallet/{id}")
     public HttpEntity<?> edtTeacherWallet(@PathVariable UUID id,@RequestParam(name = "monthlyFee") Double monthlyFee){
         ApiResponse apiResponse = teacherService.editTeacherWallet(id, monthlyFee);
         return ResponseEntity.status(apiResponse.isSuccess()?200:409).body(apiResponse);

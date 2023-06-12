@@ -3,7 +3,6 @@ package uTeamCrm.Crmmasterplatform.entity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import uTeamCrm.Crmmasterplatform.entity.enums.ConditionName;
 import uTeamCrm.Crmmasterplatform.entity.template.AbsEntity;
 
 import javax.persistence.*;
@@ -11,7 +10,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.locks.Condition;
 
 @Getter
 @Setter
@@ -80,7 +78,7 @@ public class User extends AbsEntity implements UserDetails {
         return userName;
     }
 
-    public User(String name, String userSurname, String phoneNumber, Role role, Condtion conditionName){
+    public User(String name, String userSurname, String phoneNumber, Role role, Condtion conditionName) {
         this.name = name;
         this.userSurname = userSurname;
         this.phoneNumber = phoneNumber;

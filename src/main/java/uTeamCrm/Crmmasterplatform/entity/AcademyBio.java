@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @Builder
 @Entity
-public class AcademyBio extends AbsEntity {
+public class  AcademyBio extends AbsEntity {
     @Column(nullable = false, unique = true, name = "academy_bio")
     private String phoneNumber; //har bitta academyning tel raqami
 
