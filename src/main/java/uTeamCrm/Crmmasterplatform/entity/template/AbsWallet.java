@@ -17,5 +17,4 @@ public abstract class AbsWallet extends AbsEntity {
     private Double monthlyProfit; // o'qituvchinik ushbu oydagi olgan puli
 
     private Double allProfit; // o'
-
 }

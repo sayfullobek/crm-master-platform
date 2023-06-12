@@ -15,7 +15,6 @@ public class WeekDay {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     @Enumerated(value = EnumType.STRING)
     private WeekDayName weekDayName; //hafta nomi
 }

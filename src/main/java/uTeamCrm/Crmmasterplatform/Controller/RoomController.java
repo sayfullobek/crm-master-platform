@@ -35,19 +35,19 @@ public class RoomController {
     @PostMapping
     public HttpEntity<?> addRoom(@RequestParam(name = "uzName") String uzName, @RequestParam(name = "ruName") String ruName, @RequestParam(name = "academyId") UUID academyId) {
         ApiResponse apiResponse = roomService.addRoom(uzName, ruName, academyId);
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess()?200:409).body(apiResponse);
     }
 
     @PutMapping("/{id}")
     public HttpEntity<?> editRoom(@PathVariable Integer id, @RequestParam(name = "uzName") String uzName, @RequestParam(name = "ruName") String ruName) {
         ApiResponse apiResponse = roomService.editRoom(id, uzName, ruName);
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
     }
 
     @DeleteMapping("/{id}")
     public HttpEntity<?> deleteRoom(@PathVariable Integer id) {
         ApiResponse apiResponse = roomService.deleteRoom(id);
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess()?200:409).body(apiResponse);
     }
 
 }

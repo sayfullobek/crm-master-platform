@@ -18,6 +18,4 @@ public class TeacherWallet extends AbsWallet {
 
     @OneToOne
     private User user;
-
-
 }
