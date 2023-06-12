@@ -25,7 +25,6 @@ public class TeacherController {
     private final AuthRepository authRepository;
     private final RoleRepository repository;
     private final TeacherWalletRepo teacherWalletRepo;
-    Role getRole = repository.findById(3).orElseThrow(() -> new ResourceNotFoundException("getRole"));
 
     @PostMapping
     public HttpEntity<?> addTeacher(@RequestParam(name = "academyId") UUID academyId, @RequestParam(name = "name") String name, @RequestParam(name = "midlName") String midlName, @RequestParam(name = "phoneNumber") String phoneNumber, @RequestParam(name = "surName") String surName, @RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword, @RequestParam(name = "courseId") Integer courseId) {
@@ -35,12 +34,14 @@ public class TeacherController {
 
     @GetMapping
     public HttpEntity<?> getTeacher() {
+        Role getRole = repository.findById(3).orElseThrow(() -> new ResourceNotFoundException("getRole"));
         Optional<User> userByRole = authRepository.findUserByRole(getRole);
         return ResponseEntity.ok(userByRole);
     }
 
     @GetMapping("{id}")
     public HttpEntity<?> getOneTeacher(@PathVariable UUID id) {
+        Role getRole = repository.findById(3).orElseThrow(() -> new ResourceNotFoundException("getRole"));
         User teacher = authRepository.findUserByRoleAndId(getRole, id);
         return ResponseEntity.ok(teacher);
     }
