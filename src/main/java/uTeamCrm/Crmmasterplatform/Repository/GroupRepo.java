@@ -6,4 +6,6 @@ import uTeamCrm.Crmmasterplatform.entity.Group;
 import java.util.UUID;
 
 public interface GroupRepo extends JpaRepository<Group, UUID> {
+
+    boolean existsGroupsByNameEqualsIgnoreCase(String name);
 }

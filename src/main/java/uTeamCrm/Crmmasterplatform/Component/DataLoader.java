@@ -9,11 +9,14 @@ import org.springframework.stereotype.Component;
 import uTeamCrm.Crmmasterplatform.Repository.AuthRepository;
 import uTeamCrm.Crmmasterplatform.Repository.ConditionRepository;
 import uTeamCrm.Crmmasterplatform.Repository.RoleRepository;
+import uTeamCrm.Crmmasterplatform.Repository.WeekDayRepo;
 import uTeamCrm.Crmmasterplatform.entity.Condtion;
 import uTeamCrm.Crmmasterplatform.entity.Role;
 import uTeamCrm.Crmmasterplatform.entity.User;
+import uTeamCrm.Crmmasterplatform.entity.WeekDay;
 import uTeamCrm.Crmmasterplatform.entity.enums.ConditionName;
 import uTeamCrm.Crmmasterplatform.entity.enums.RoleName;
+import uTeamCrm.Crmmasterplatform.entity.enums.WeekDayName;
 
 @Component
 @Configuration
@@ -28,6 +31,8 @@ public class DataLoader implements CommandLineRunner {
 
     private final ConditionRepository conditionRepository;
 
+    private final WeekDayRepo weekDayRepo;
+
     @Value("${spring.jpa.hibernate.ddl-auto}")
     private String init;
 
@@ -40,6 +45,9 @@ public class DataLoader implements CommandLineRunner {
             }
             for (ConditionName value : ConditionName.values()) {
                 conditionRepository.save(new Condtion(value));
+            }
+            for (WeekDayName value : WeekDayName.values()) {
+                weekDayRepo.save(new WeekDay(value));
             }
         }
     }

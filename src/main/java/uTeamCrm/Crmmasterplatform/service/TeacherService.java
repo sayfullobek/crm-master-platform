@@ -1,7 +1,10 @@
 package uTeamCrm.Crmmasterplatform.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uTeamCrm.Crmmasterplatform.Repository.*;
 import uTeamCrm.Crmmasterplatform.entity.*;
@@ -20,16 +23,20 @@ public class TeacherService {
     private final RoleRepository repository;
     private final TeacherWalletRepo teacherWalletRepo;
 
-    public ApiResponse addTeacher(UUID academyId, String name, String midlName, String phoneNumber, String surName, String userName, String userPassword, Integer courseId) {
+    @Autowired
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    public ApiResponse addTeacher( String name, String midlName, String phoneNumber, String surName, String userName, String userPassword, Integer courseId) {
         try {
-            List<Academy> getAcademy = Collections.singletonList(academyRepo.findById(academyId).orElseThrow(() -> new ResourceNotFoundException("getAcademy")));
+//            List<Academy> getAcademy = Collections.singletonList(academyRepo.findById(academyId).orElseThrow(() -> new ResourceNotFoundException("getAcademy")));
             List<Course> getCourse = Collections.singletonList(courseRepo.findById(courseId).orElseThrow(() -> new ResourceNotFoundException("getCourse")));
             Role getRole = repository.findById(3).orElseThrow(() -> new ResourceNotFoundException("getRole"));
             User build = User.builder()
-                    .userPassword(userPassword)
+                    .userPassword(passwordEncoder().encode(userPassword))
                     .userSurname(surName)
                     .courses(getCourse)
-                    .academies(getAcademy)
+//                    .academies(getAcademy)
                     .name(name)
                     .userMiddleName(midlName)
                     .phoneNumber(phoneNumber)
@@ -92,4 +99,6 @@ public class TeacherService {
         teacherWalletRepo.save(teacherWallet);
         return new ApiResponse("saqlandi",true);
     }
+
+
 }

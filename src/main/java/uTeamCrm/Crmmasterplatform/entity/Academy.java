@@ -8,6 +8,7 @@ import uTeamCrm.Crmmasterplatform.entity.template.AbsEntity;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -43,6 +44,12 @@ public class Academy extends AbsEntity implements UserDetails {
 
     @Column(nullable = false, name = "director_password")
     private String directorPassword;//director paroli
+
+    @ManyToMany
+    @JoinTable(name = "academy_in_group",
+            joinColumns = {@JoinColumn(name = "group_id")},
+            inverseJoinColumns = {@JoinColumn(name = "academy_id")})
+    private List<Group> groups; //ushbu group qaysi academyaga tegishli
 
     @ManyToOne(optional = false)
     private Role role; //director roli

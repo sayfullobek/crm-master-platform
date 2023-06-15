@@ -27,8 +27,8 @@ public class TeacherController {
     private final TeacherWalletRepo teacherWalletRepo;
 
     @PostMapping
-    public HttpEntity<?> addTeacher(@RequestParam(name = "academyId") UUID academyId, @RequestParam(name = "name") String name, @RequestParam(name = "midlName") String midlName, @RequestParam(name = "phoneNumber") String phoneNumber, @RequestParam(name = "surName") String surName, @RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword, @RequestParam(name = "courseId") Integer courseId) {
-        ApiResponse apiResponse = teacherService.addTeacher(academyId, name, midlName, phoneNumber, surName, userName, userPassword, courseId);
+    public HttpEntity<?> addTeacher(@RequestParam(name = "name") String name, @RequestParam(name = "midlName") String midlName, @RequestParam(name = "phoneNumber") String phoneNumber, @RequestParam(name = "surName") String surName, @RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword, @RequestParam(name = "courseId") Integer courseId) {
+        ApiResponse apiResponse = teacherService.addTeacher( name, midlName, phoneNumber, surName, userName, userPassword, courseId);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 

@@ -17,4 +17,8 @@ public class WeekDay {
     private Integer id;
     @Enumerated(value = EnumType.STRING)
     private WeekDayName weekDayName; //hafta nomi
+
+    public WeekDay(WeekDayName weekDayName) {
+        this.weekDayName = weekDayName;
+    }
 }

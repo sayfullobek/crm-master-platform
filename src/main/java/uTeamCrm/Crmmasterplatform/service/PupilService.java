@@ -84,21 +84,10 @@ public class PupilService {
 
     public ApiResponse addRealPupil(ReqPupil reqPupil) {
         List<Course> courses = new ArrayList<>();
-        StudentDailyStatistics studentDailyStatistics = StudentDailyStatistics.builder().dailyFee(0.0).todayActive(true).build();
-        MonthlyStatistics monthlyStatistics = MonthlyStatistics.builder().monthlyPayment(0.0).build();
-        AllStatisticForPupil allStatisticForPupil = AllStatisticForPupil.builder().allCost(0.0).studyDuration(0).build();
         for (SelectDto cours : reqPupil.getCourses()) {
             Course getCourse = courseRepo.findById(cours.getValue()).orElseThrow(() -> new ResourceNotFoundException("getCourse"));
-            double v = getCourse.getCoursePrice() / 30;
-            studentDailyStatistics.setDailyFee(studentDailyStatistics.getDailyFee() + v);
-            monthlyStatistics.setMonthlyPayment(monthlyStatistics.getMonthlyPayment() + getCourse.getCoursePrice());
-            MonthlyStatistics monthlyStatistics1 = monthlyStatisticsRepo.save(monthlyStatistics);
-            allStatisticForPupil.setAllCost(monthlyStatistics1.getMonthlyPayment() * 12);
-            allStatisticForPupil.setMonthlyStatistics(Collections.singletonList(monthlyStatistics1));
             courses.add(getCourse);
         }
-        StudentDailyStatistics studentDailyStatistics1 = studentDailyStatisticsRepo.save(studentDailyStatistics);
-        monthlyStatistics.setStudentDailyStatistics(Collections.singletonList(studentDailyStatistics1));
         Role getPupil = roleRepository.findById(5).orElseThrow(() -> new ResourceNotFoundException("getPupil"));
         User user = new User(
                 reqPupil.getName(),
@@ -112,10 +101,8 @@ public class PupilService {
                 courses
         );
         User save = authRepository.save(user);
-        Wallet wallet = Wallet.builder().user(save).build();
+        Wallet wallet = Wallet.builder().user(save).balance(0).saleProtsent(0).build();
         walletRepo.save(wallet);
-        allStatisticForPupil.setUser(save);
-        allStaticForPupilRepo.save(allStatisticForPupil);
         return new ApiResponse("saqlandi", true);
     }
 

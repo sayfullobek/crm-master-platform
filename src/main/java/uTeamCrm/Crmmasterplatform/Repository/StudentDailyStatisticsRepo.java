@@ -6,4 +6,5 @@ import uTeamCrm.Crmmasterplatform.entity.StudentDailyStatistics;
 import java.util.UUID;
 
 public interface StudentDailyStatisticsRepo extends JpaRepository<StudentDailyStatistics, UUID> {
+
 }

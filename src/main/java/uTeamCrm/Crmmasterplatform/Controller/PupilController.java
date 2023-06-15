@@ -2,6 +2,7 @@ package uTeamCrm.Crmmasterplatform.Controller;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +49,13 @@ public class PupilController {
         List<PupilDto> newPupil = pupilService.getNewPupil("REQUEST");
         return ResponseEntity.ok(newPupil);
     }
+
+    @GetMapping("/{id}")
+    public HttpEntity<?> getOnePupil(@PathVariable UUID id){
+        User user = authRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("getPupil"));
+        return ResponseEntity.ok(user);
+    }
+
 
     @PostMapping("/newpupil")
     public HttpEntity<?> addNewPupil(@RequestBody ReqPupil reqPupil){

@@ -27,4 +27,5 @@ public class Wallet extends AbsEntity {
     @Column
     private boolean frozen = true;
 
+
 }

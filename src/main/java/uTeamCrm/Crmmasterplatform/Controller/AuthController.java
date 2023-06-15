@@ -3,6 +3,7 @@ package uTeamCrm.Crmmasterplatform.Controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,9 +41,19 @@ public class AuthController {
         User user = authRepository.findUserByPhoneNumber(request.getPhoneNumber()).get();
         ResToken resToken = new ResToken(generateToken(request.getPhoneNumber()));
         if (user.getRole().getRoleName().equals(RoleName.PUPIL)) {
-            return ResponseEntity.ok(getmalumot(user, resToken, "/auth/user"));
+            return ResponseEntity.ok(getmalumot(user, resToken));
         }
-        return ResponseEntity.ok(getmalumot(user, resToken, "/auth/admin"));
+        return ResponseEntity.ok(getmalumot(user, resToken));
+    }
+
+    @PostMapping("/pupil/login")
+    public HttpEntity<?> pupilLogin(@RequestBody ReqLogin request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getPhoneNumber(), request.getPassword())
+        );
+        User user = authRepository.findUserByPhoneNumber(request.getPhoneNumber()).get();
+        ResToken resToken = new ResToken(generateToken(request.getPhoneNumber()));
+        return ResponseEntity.status(user.getRole().getRoleName().equals(RoleName.PUPIL) ? 200 : 409).body(getmalumot(user, resToken));
     }
 
 
@@ -59,7 +70,7 @@ public class AuthController {
 
 
 
-    public GetMal getmalumot(User user, ResToken resToken, String path) {
+    public GetMal getmalumot(User user, ResToken resToken) {
         return new GetMal(user, resToken);
     }
 

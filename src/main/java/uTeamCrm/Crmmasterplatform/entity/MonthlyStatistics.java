@@ -1,11 +1,14 @@
 package uTeamCrm.Crmmasterplatform.entity;
 
+import com.fasterxml.jackson.databind.DatabindException;
 import lombok.*;
+import org.springframework.data.auditing.IsNewAwareAuditingHandler;
 import uTeamCrm.Crmmasterplatform.entity.template.AbsEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -26,4 +29,7 @@ public class MonthlyStatistics extends AbsEntity {
 
     @Column
     private Double monthlyPayment; //oylik to'laydigan summasi
+
+    @Column
+    private Integer nowMonth;
 }
