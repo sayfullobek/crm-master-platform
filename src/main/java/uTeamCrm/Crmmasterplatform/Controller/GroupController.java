@@ -55,10 +55,16 @@ public class GroupController {
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 
-    @PostMapping("/yoqlama")
-    public HttpEntity<?> yoqlama(@RequestParam(name = "pupilId") UUID pupilId, @RequestParam(name = "percentage") Integer percentage, @RequestParam(name = "nowDay")Integer nowDay, @RequestParam(name = "nowMonth")Integer nowMonth, @RequestParam(name = "trueOrFalse")boolean trueOrFalse){
-        ApiResponse apiResponse = groupService.keldiKetti(pupilId, nowDay, nowMonth, percentage, trueOrFalse);
+
+    @PutMapping("/frozen/{id}")
+    public HttpEntity<?> frozed(@PathVariable UUID id){
+        ApiResponse apiResponse = groupService.groupDisabled(id);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 
+    @DeleteMapping("/removeFrom/{groupId}")
+    public HttpEntity<?> removeFromGroup(@PathVariable UUID groupId, @RequestParam(name = "pupilId") UUID pupilId){
+        ApiResponse apiResponse = groupService.removeFromGroup(pupilId, groupId);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+    }
 }

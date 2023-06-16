@@ -31,16 +31,12 @@ public class StatisticService {
     public StatisticDto tolovlar(UUID pupilId){
         AllStatisticForPupil allStatisticForPupil = allStaticForPupilRepo.findAllStatisticForPupilByUserId(pupilId);
         Wallet wallet = walletRepo.findWalletByUserId(pupilId);
-        User user = authRepository.findById(pupilId).orElseThrow(() -> new ResourceNotFoundException("getPupil"));
-        double allPrice = 0;
-        for (Course cours : user.getCourses()) {
-            allPrice = allPrice + cours.getCoursePrice();
-        }
         return StatisticDto.builder()
                 .tolovQildi(wallet.getBalance())
-                .qoldi(allPrice - wallet.getBalance())
-                .dailyfee(0.0)
+                .qoldi(allStatisticForPupil.getAllCost() - wallet.getBalance())
+                .dailyfee((double) Math.round(allStatisticForPupil.getDailyFee()))
                 .totalPayment(allStatisticForPupil.getAllCost())
+                .ketganHarajat(allStatisticForPupil.getAllSum())
                 .build();
     }
 }

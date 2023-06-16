@@ -67,9 +67,6 @@ public class AuthController {
     }
 
 
-
-
-
     public GetMal getmalumot(User user, ResToken resToken) {
         return new GetMal(user, resToken);
     }

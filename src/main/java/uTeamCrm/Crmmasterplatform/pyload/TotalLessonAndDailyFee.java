@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StatisticDto {
-    private Double tolovQildi;
-    private Double qoldi;
-    private Double dailyfee;
-    private Double totalPayment;
-    private double ketganHarajat;
+public class TotalLessonAndDailyFee {
+    private Double dailyFee;
+    private Integer jamiDarslarSoni;
 }

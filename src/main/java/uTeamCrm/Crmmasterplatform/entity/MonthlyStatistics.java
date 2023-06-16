@@ -30,6 +30,7 @@ public class MonthlyStatistics extends AbsEntity {
     @Column
     private Double monthlyPayment; //oylik to'laydigan summasi
 
+
     @Column
-    private Integer nowMonth;
+    private Integer howMuchLesson; // ushbu oyda necha marta dars bo'lishi
 }

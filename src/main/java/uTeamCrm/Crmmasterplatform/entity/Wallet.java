@@ -25,7 +25,7 @@ public class Wallet extends AbsEntity {
     private double saleProtsent; // foydalanuvchi chegirmasi
 
     @Column
-    private boolean frozen = true;
+    private boolean frozen = true; // wallet active yoki not active
 
 
 }

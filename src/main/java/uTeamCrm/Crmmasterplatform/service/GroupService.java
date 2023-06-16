@@ -10,10 +10,7 @@ import uTeamCrm.Crmmasterplatform.entity.*;
 import uTeamCrm.Crmmasterplatform.entity.enums.DayType;
 import uTeamCrm.Crmmasterplatform.entity.enums.RoleName;
 import uTeamCrm.Crmmasterplatform.entity.enums.WeekDayName;
-import uTeamCrm.Crmmasterplatform.pyload.ApiResponse;
-import uTeamCrm.Crmmasterplatform.pyload.PupilSelectDto;
-import uTeamCrm.Crmmasterplatform.pyload.ReqGroup;
-import uTeamCrm.Crmmasterplatform.pyload.SelectDto;
+import uTeamCrm.Crmmasterplatform.pyload.*;
 
 import java.time.Instant;
 import java.util.*;
@@ -119,65 +116,49 @@ public class GroupService {
     public ApiResponse addPupilToGroup(UUID groupId, List<PupilSelectDto> pupils) {
         Group getGroup = groupRepo.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("getGroup"));
         List<User> users = new ArrayList<>();
-        List<MonthlyStatistics> monthlyStatistics = new ArrayList<>();
-        Double sum = 0.0;
         for (PupilSelectDto pupil : pupils) {
             User user = authRepository.findById(pupil.getValue()).orElseThrow(() -> new ResourceNotFoundException("getPupil"));
             for (Course cours : user.getCourses()) {
-                for (int i = 0; i < cours.getCourseDuration(); i++) {
-                    MonthlyStatistics monthlyStatistics1 = MonthlyStatistics.builder().monthlyPayment(sum + cours.getCoursePrice()).build();
-                    monthlyStatistics.add(monthlyStatistics1);
-                    monthlyStatisticsRepo.save(monthlyStatistics1);
+                if (cours.equals(getGroup.getCourse())){
+                    users.add(user);
+                    TotalLessonAndDailyFee dailyFee = getDailyFee(getGroup, getGroup.getCourse());
+                    AllStatisticForPupil allStatisticForPupilByUserId = allStaticForPupilRepo.findAllStatisticForPupilByUserId(pupil.getValue());
+                    if (allStatisticForPupilByUserId == null) {
+                        AllStatisticForPupil build = AllStatisticForPupil.builder().user(user).dailyFee(dailyFee.getDailyFee()).allCost(getGroup.getCourse().getCoursePrice()).build();
+                        allStaticForPupilRepo.save(build);
+                    } else {
+                        allStatisticForPupilByUserId.setAllCost(allStatisticForPupilByUserId.getAllCost() + getGroup.getCourse().getCoursePrice());
+                        allStatisticForPupilByUserId.setDailyFee(allStatisticForPupilByUserId.getDailyFee() + dailyFee.getDailyFee());
+                        allStaticForPupilRepo.save(allStatisticForPupilByUserId);
+                    }
                 }
-                break;
             }
-            users.add(user);
         }
-        AllStatisticForPupil allStatisticForPupil = AllStatisticForPupil.builder().monthlyStatistics(monthlyStatistics).build();
-        allStaticForPupilRepo.save(allStatisticForPupil);
         getGroup.getPupils().addAll(users);
         groupRepo.save(getGroup);
         return new ApiResponse("gruhga o'quvchilar  saqlandi", true);
     }
 
-    public ApiResponse keldiKetti(UUID pupilId, Integer nowDay, Integer nowMonth, Integer percentage, boolean trueOrFalse) {
-        MonthlyStatistics monthlyStatisticsByNowMonth = monthlyStatisticsRepo.findMonthlyStatisticsByNowMonth(nowMonth);
-        int size = 0;
-        Calendar instance = Calendar.getInstance();
+
+    public ApiResponse removeFromGroup(UUID pupilId, UUID groupId) {
         User user = authRepository.findById(pupilId).orElseThrow(() -> new ResourceNotFoundException("getPupil"));
-        for (Group group : groupRepo.findAll()) {
-            for (User pupil : group.getPupils()) {
-                if (user.getId().equals(pupil.getId())) {
-                    size = group.getWeekDays().size();
-                }
-            }
-        }
-        Date date = new Date();
-        if (date.getDate() == nowDay) {
-            double dayleFee = 0;
-            double monthlyPayment = 0;
-            for (Course course : user.getCourses()) {
-                int actualMaximum = instance.getActualMaximum(Calendar.DAY_OF_MONTH);
-                int hafta = actualMaximum / 7;
-                int qoldiqKun = actualMaximum % 7;
-                int darslarSoni = size * hafta;
-                int qoldiqDars = qoldiqKun == size ? 2 : size / qoldiqKun;
-                int jamiDarslarSoni = darslarSoni + qoldiqDars;
-                dayleFee = dayleFee + course.getCoursePrice() / jamiDarslarSoni;
-                monthlyPayment = monthlyPayment + course.getCoursePrice();
-            }
-            monthlyStatisticsByNowMonth.setMonthlyPayment(monthlyPayment);
-            StudentDailyStatistics studentDailyStatistics = StudentDailyStatistics.builder().dailyFee(dayleFee).dailyPercentage(percentage).todayActive(trueOrFalse).build();
-            monthlyStatisticsByNowMonth.setTotalPercentage(monthlyStatisticsByNowMonth.getTotalPercentage() + studentDailyStatistics.getDailyPercentage());
-            if (!studentDailyStatistics.isTodayActive()) {
-                monthlyStatisticsByNowMonth.setNumberOfAbsences(monthlyStatisticsByNowMonth.getNumberOfAbsences() + 1);
-            }
-            StudentDailyStatistics save = studentDailyStatisticsRepo.save(studentDailyStatistics);
-            monthlyStatisticsByNowMonth.getStudentDailyStatistics().add(save);
-            monthlyStatisticsRepo.save(monthlyStatisticsByNowMonth);
-            return new ApiResponse("foydalanuvchi bugungi statistikasi saqlandi", true);
-        }
-        return new ApiResponse("hatolik", false);
+        Group getGroup = groupRepo.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("getGroup"));
+        getGroup.getPupils().remove(user);
+        groupRepo.save(getGroup);
+        return new ApiResponse("Gruhdan o'quvchi olib tashlandi", true);
     }
 
+    public TotalLessonAndDailyFee getDailyFee(Group getGroup, Course course) {
+        double dailyFee = 0;
+        Calendar instance = Calendar.getInstance();
+        int size = getGroup.getWeekDays().size();
+        int actualMaximum = instance.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int hafta = actualMaximum / 7;
+        int qoldiqKun = actualMaximum % 7;
+        int darslarSoni = size * hafta;
+        int qoldiqDars = qoldiqKun == size ? 2 : size / qoldiqKun;
+        int jamiDarslarSoni = darslarSoni + qoldiqDars;
+        dailyFee = dailyFee + course.getCoursePrice() / jamiDarslarSoni;
+        return new TotalLessonAndDailyFee(dailyFee, jamiDarslarSoni);
+    }
 }
