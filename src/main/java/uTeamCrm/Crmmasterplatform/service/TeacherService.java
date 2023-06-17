@@ -27,7 +27,7 @@ public class TeacherService {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    public ApiResponse addTeacher( String name, String midlName, String phoneNumber, String surName, String userName, String userPassword, Integer courseId) {
+    public ApiResponse addTeacher( String name, String midlName, String phoneNumber, String surName, String userName, String userPassword, Integer courseId, double monthlyFee) {
         try {
 //            List<Academy> getAcademy = Collections.singletonList(academyRepo.findById(academyId).orElseThrow(() -> new ResourceNotFoundException("getAcademy")));
             List<Course> getCourse = Collections.singletonList(courseRepo.findById(courseId).orElseThrow(() -> new ResourceNotFoundException("getCourse")));
@@ -44,6 +44,8 @@ public class TeacherService {
                     .role(getRole)
                     .build();
             User save = authRepository.save(build);
+            TeacherWallet teacherWallet = TeacherWallet.builder().teacher(save).monthlyFee(monthlyFee).build();
+            teacherWalletRepo.save(teacherWallet);
             return new ApiResponse("saqlandi", true);
         } catch (Exception e) {
             return new ApiResponse("xato", false);
@@ -72,33 +74,19 @@ public class TeacherService {
     public ApiResponse deleteTeacher(UUID id) {
         try {
             User getTeacher = authRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("getTeacher"));
+            TeacherWallet teacherWalletByTeacherId = teacherWalletRepo.findTeacherWalletByTeacherId(getTeacher.getId());
+            teacherWalletRepo.delete(teacherWalletByTeacherId);
             authRepository.delete(getTeacher);
             return new ApiResponse("O'chirildi", true);
         } catch (Exception e) {
-            return new ApiResponse("xato", false);
+            return new ApiResponse("o'qtuvchini olib tashlashda hatolik", false);
         }
     }
 
-    public ApiResponse addTeacherWallet(Double monthlyFee, UUID userId) {
-        Role getRole = repository.findById(3).orElseThrow(() -> new ResourceNotFoundException("getRole"));
-        User userByRoleAndId = authRepository.findUserByRoleAndId(getRole, userId);
-        try {
-            TeacherWallet build = TeacherWallet.builder()
-                    .monthlyFee(monthlyFee)
-                    .teacher(userByRoleAndId)
-                    .build();
-            teacherWalletRepo.save(build);
-            return new ApiResponse("saqlandi", true);
-        }catch (Exception e) {
-            return new ApiResponse("error", false);
-        }
-    }
     public ApiResponse editTeacherWallet(UUID userId,Double monthlyFee){
         TeacherWallet teacherWallet = teacherWalletRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("getWallet"));
         teacherWallet.setMonthlyFee(monthlyFee);
         teacherWalletRepo.save(teacherWallet);
         return new ApiResponse("saqlandi",true);
     }
-
-
 }

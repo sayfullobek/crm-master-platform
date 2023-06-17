@@ -1,17 +1,15 @@
 package uTeamCrm.Crmmasterplatform.service;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 import uTeamCrm.Crmmasterplatform.Repository.*;
 import uTeamCrm.Crmmasterplatform.entity.AllStatisticForPupil;
-import uTeamCrm.Crmmasterplatform.entity.Course;
-import uTeamCrm.Crmmasterplatform.entity.User;
+import uTeamCrm.Crmmasterplatform.entity.PaymentHistory;
 import uTeamCrm.Crmmasterplatform.entity.Wallet;
-import uTeamCrm.Crmmasterplatform.pyload.ApiResponse;
 import uTeamCrm.Crmmasterplatform.pyload.StatisticDto;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -28,12 +26,20 @@ public class StatisticService {
 
     private final AuthRepository authRepository;
 
-    public StatisticDto tolovlar(UUID pupilId){
+    private final PaymentHistoryRepo paymentHistoryRepo;
+
+    public StatisticDto tolovlar(UUID pupilId) {
+        Date date = new Date();
         AllStatisticForPupil allStatisticForPupil = allStaticForPupilRepo.findAllStatisticForPupilByUserId(pupilId);
-        Wallet wallet = walletRepo.findWalletByUserId(pupilId);
+        Double howMuch = 0.0;
+        for (PaymentHistory paymentHistory : paymentHistoryRepo.findPaymentHistoriesByUserId(pupilId)) {
+            if (paymentHistory.getHowTime().getMonth() == date.getMonth()) {
+                howMuch = howMuch + paymentHistory.getHowMuch();
+            }
+        }
         return StatisticDto.builder()
-                .tolovQildi(wallet.getBalance())
-                .qoldi(allStatisticForPupil.getAllCost() - wallet.getBalance())
+                .tolovQildi(howMuch)
+                .qoldi(allStatisticForPupil.getAllCost() < howMuch ? 0.0 : allStatisticForPupil.getAllCost() - howMuch)
                 .dailyfee((double) Math.round(allStatisticForPupil.getDailyFee()))
                 .totalPayment(allStatisticForPupil.getAllCost())
                 .ketganHarajat(allStatisticForPupil.getAllSum())

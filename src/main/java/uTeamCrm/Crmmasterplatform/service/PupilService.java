@@ -5,6 +5,7 @@ import org.hibernate.hql.internal.classic.AbstractParameterInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,10 +13,7 @@ import uTeamCrm.Crmmasterplatform.Repository.*;
 import uTeamCrm.Crmmasterplatform.entity.*;
 import uTeamCrm.Crmmasterplatform.entity.enums.ConditionName;
 import uTeamCrm.Crmmasterplatform.entity.enums.RoleName;
-import uTeamCrm.Crmmasterplatform.pyload.ApiResponse;
-import uTeamCrm.Crmmasterplatform.pyload.PupilDto;
-import uTeamCrm.Crmmasterplatform.pyload.ReqPupil;
-import uTeamCrm.Crmmasterplatform.pyload.SelectDto;
+import uTeamCrm.Crmmasterplatform.pyload.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,14 +32,13 @@ public class PupilService {
 
     private final CourseRepo courseRepo;
 
-
-    private final AllStaticForPupilRepo allStaticForPupilRepo;
-
-    private final MonthlyStatisticsRepo monthlyStatisticsRepo;
-    private final StudentDailyStatisticsRepo studentDailyStatisticsRepo;
+    private final GroupRepo groupRepo;
 
     private final WalletRepo walletRepo;
 
+    private final GroupService groupService;
+
+    private final AllStaticForPupilRepo allStaticForPupilRepo;
     @Autowired
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -84,6 +81,7 @@ public class PupilService {
 
     public ApiResponse addRealPupil(ReqPupil reqPupil) {
         List<Course> courses = new ArrayList<>();
+        Group getGroup = groupRepo.findById(reqPupil.getGroupId()).orElseThrow(() -> new ResourceNotFoundException("getGroup"));
         for (SelectDto cours : reqPupil.getCourses()) {
             Course getCourse = courseRepo.findById(cours.getValue()).orElseThrow(() -> new ResourceNotFoundException("getCourse"));
             courses.add(getCourse);
@@ -100,15 +98,29 @@ public class PupilService {
                 conditionRepository.findById(3).orElseThrow(() -> new ResourceNotFoundException("getRole")),
                 courses
         );
-        User save = authRepository.save(user);
-        Wallet wallet = Wallet.builder().user(save).balance(0).saleProtsent(0).build();
-        walletRepo.save(wallet);
-        return new ApiResponse("saqlandi", true);
+        ApiResponse apiResponse = new ApiResponse();
+        for (Course cours : courses) {
+            if (cours.equals(getGroup.getCourse())) {
+                User save = authRepository.save(user);
+                TotalLessonAndDailyFee dailyFee = groupService.getDailyFee(getGroup, getGroup.getCourse());
+                AllStatisticForPupil allStatisticForPupilByUserId = allStaticForPupilRepo.findAllStatisticForPupilByUserId(user.getId());
+                if (allStatisticForPupilByUserId == null) {
+                    AllStatisticForPupil build = AllStatisticForPupil.builder().user(user).dailyFee(dailyFee.getDailyFee()).allCost(getGroup.getCourse().getCoursePrice()).allSum(0.0).build();
+                    allStaticForPupilRepo.save(build);
+                } else {
+                    allStatisticForPupilByUserId.setAllCost(allStatisticForPupilByUserId.getAllCost() + getGroup.getCourse().getCoursePrice());
+                    allStatisticForPupilByUserId.setDailyFee(allStatisticForPupilByUserId.getDailyFee() + dailyFee.getDailyFee());
+                    allStaticForPupilRepo.save(allStatisticForPupilByUserId);
+                }
+                getGroup.getPupils().add(save);
+                groupRepo.save(getGroup);
+                Wallet wallet = Wallet.builder().user(save).balance(0).saleProtsent(0).build();
+                walletRepo.save(wallet);
+                return new ApiResponse("o'quvchi saqlandi", true);
+            }else {
+                apiResponse = new ApiResponse("o'quvchini siz tanlagan guruhga qo'shib bo'lmaydi, sabab o'quvchida ushbu gruh o'qitiladigan cours mavjud emas", false);
+            }
+        }
+        return apiResponse;
     }
-
-
-//    public ApiResponse keldiKetti(UUID uuid){
-//        User user = authRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("getPupil"));
-//        AllStatisticForPupil allStatisticForPupilByUserId = allStaticForPupilRepo.findAllStatisticForPupilByUserId(user.getId());
-//    }
 }

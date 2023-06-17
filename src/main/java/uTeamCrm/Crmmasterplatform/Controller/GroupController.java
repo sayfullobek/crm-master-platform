@@ -31,16 +31,16 @@ public class GroupController {
         return ResponseEntity.ok(all);
     }
 
-//    @GetMapping("/{id}")
-//    public HttpEntity<?> getGroupOfOneAcademy(@PathVariable UUID id){
-//        List<Group> groupOfOneAcademy = groupService.getGroupOfOneAcademy(id);
-//        return ResponseEntity.ok(groupOfOneAcademy);
-//    }
-
     @GetMapping("/teacher/{id}")
     public HttpEntity<?> getTeacherGroups(@PathVariable UUID id){
         List<Group> teacherGroups = groupService.getTeacherGroups(id);
         return ResponseEntity.ok(teacherGroups);
+    }
+
+    @GetMapping("/pupil/{id}")
+    public HttpEntity<?> getMyGroups(@PathVariable UUID id){
+        List<Group> groupByPupilsId = groupRepo.findGroupByPupilsId(id);
+        return ResponseEntity.ok(groupByPupilsId);
     }
 
     @PostMapping

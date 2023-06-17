@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -20,4 +21,5 @@ public class ReqPupil {
     private String password;
     private String middleName;
     private List<SelectDto> courses;
+    private UUID groupId;
 }

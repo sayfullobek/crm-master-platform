@@ -27,8 +27,8 @@ public class TeacherController {
     private final TeacherWalletRepo teacherWalletRepo;
 
     @PostMapping
-    public HttpEntity<?> addTeacher(@RequestParam(name = "name") String name, @RequestParam(name = "midlName") String midlName, @RequestParam(name = "phoneNumber") String phoneNumber, @RequestParam(name = "surName") String surName, @RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword, @RequestParam(name = "courseId") Integer courseId) {
-        ApiResponse apiResponse = teacherService.addTeacher( name, midlName, phoneNumber, surName, userName, userPassword, courseId);
+    public HttpEntity<?> addTeacher(@RequestParam(name = "name") String name, @RequestParam(name = "midlName") String midlName, @RequestParam(name = "phoneNumber") String phoneNumber, @RequestParam(name = "surName") String surName, @RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword, @RequestParam(name = "courseId") Integer courseId, @RequestParam(name = "monthlyFee") Double monthlyFee) {
+        ApiResponse apiResponse = teacherService.addTeacher(name, midlName, phoneNumber, surName, userName, userPassword, courseId, monthlyFee);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 
@@ -55,12 +55,6 @@ public class TeacherController {
     @DeleteMapping("{id}")
     public HttpEntity<?> deleteTeacher(@PathVariable UUID id) {
         ApiResponse apiResponse = teacherService.deleteTeacher(id);
-        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
-    }
-
-    @PostMapping("/tWallet")
-    public HttpEntity<?> addTeacherWallet(@RequestParam(name = "monthlyFee") Double monthlyFee, @RequestParam(name = "udrId") UUID userId) {
-        ApiResponse apiResponse = teacherService.addTeacherWallet(monthlyFee, userId);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 

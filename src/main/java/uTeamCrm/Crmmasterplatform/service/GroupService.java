@@ -116,6 +116,7 @@ public class GroupService {
     public ApiResponse addPupilToGroup(UUID groupId, List<PupilSelectDto> pupils) {
         Group getGroup = groupRepo.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("getGroup"));
         List<User> users = new ArrayList<>();
+        ApiResponse apiResponse = new ApiResponse();
         for (PupilSelectDto pupil : pupils) {
             User user = authRepository.findById(pupil.getValue()).orElseThrow(() -> new ResourceNotFoundException("getPupil"));
             for (Course cours : user.getCourses()) {
@@ -124,19 +125,22 @@ public class GroupService {
                     TotalLessonAndDailyFee dailyFee = getDailyFee(getGroup, getGroup.getCourse());
                     AllStatisticForPupil allStatisticForPupilByUserId = allStaticForPupilRepo.findAllStatisticForPupilByUserId(pupil.getValue());
                     if (allStatisticForPupilByUserId == null) {
-                        AllStatisticForPupil build = AllStatisticForPupil.builder().user(user).dailyFee(dailyFee.getDailyFee()).allCost(getGroup.getCourse().getCoursePrice()).build();
+                        AllStatisticForPupil build = AllStatisticForPupil.builder().user(user).dailyFee(dailyFee.getDailyFee()).allCost(getGroup.getCourse().getCoursePrice()).allSum(0.0).build();
                         allStaticForPupilRepo.save(build);
                     } else {
                         allStatisticForPupilByUserId.setAllCost(allStatisticForPupilByUserId.getAllCost() + getGroup.getCourse().getCoursePrice());
                         allStatisticForPupilByUserId.setDailyFee(allStatisticForPupilByUserId.getDailyFee() + dailyFee.getDailyFee());
                         allStaticForPupilRepo.save(allStatisticForPupilByUserId);
                     }
+                    apiResponse = new ApiResponse("gruhga o'quvchilar  saqlandi", true);
+                }else {
+                    apiResponse = new ApiResponse(user.getName() + " ismli o'quvchini ushbu guruhga qo'shib bo'lmaydi. sababi ushbu o'quvchi gruhda bo'ladigan kursni sotib olmagan", false);
                 }
             }
         }
         getGroup.getPupils().addAll(users);
         groupRepo.save(getGroup);
-        return new ApiResponse("gruhga o'quvchilar  saqlandi", true);
+        return apiResponse;
     }
 
 

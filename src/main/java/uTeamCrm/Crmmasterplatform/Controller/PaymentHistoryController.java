@@ -1,16 +1,51 @@
 package uTeamCrm.Crmmasterplatform.Controller;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.boot.web.server.Http2;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import uTeamCrm.Crmmasterplatform.Repository.PaymentHistoryRepo;
+import uTeamCrm.Crmmasterplatform.entity.PaymentHistory;
+import uTeamCrm.Crmmasterplatform.pyload.ApiResponse;
+import uTeamCrm.Crmmasterplatform.pyload.PaymentHistoryDto;
+import uTeamCrm.Crmmasterplatform.service.PaymentHistoryService;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/paymentHistory")
 @RequiredArgsConstructor
 public class PaymentHistoryController {
 
-    private PaymentHistoryRepo paymentHistoryRepo;
+    private final  PaymentHistoryRepo paymentHistoryRepo;
+
+    private final PaymentHistoryService paymentHistoryService;
+
+    @PostMapping
+    public HttpEntity<?> activatePupilAccount(@RequestBody PaymentHistoryDto paymentHistoryDto){
+        ApiResponse apiResponse = paymentHistoryService.activatePupilAccount(paymentHistoryDto);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+    }
+
+    @GetMapping("/list")
+    public HttpEntity<?> getAll(){
+        List<PaymentHistory> all = paymentHistoryRepo.findAll();
+        return ResponseEntity.ok(all);
+    }
+
+    @GetMapping("/{id}")
+    public HttpEntity<?> getMyPaymentHistory(@PathVariable UUID id){
+        List<PaymentHistory> paymentHistories = paymentHistoryRepo.findPaymentHistoriesByUserId(id);
+        return ResponseEntity.ok(paymentHistories);
+    }
+
+    @GetMapping("/lastMonth/{id}")
+    public HttpEntity<?> getLastMonth(@PathVariable UUID id){
+        List<PaymentHistoryDto> lastMonthPayment = paymentHistoryService.getLastMonthPayment(id);
+        return ResponseEntity.ok(lastMonthPayment);
+    }
 
 }
