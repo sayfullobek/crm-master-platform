@@ -38,6 +38,7 @@ public class PaymentHistoryService {
     public ApiResponse activatePupilAccount(PaymentHistoryDto paymentHistoryDto) {
         User user = authRepository.findById(paymentHistoryDto.getPupilId()).orElseThrow(() -> new ResourceNotFoundException("getPupil"));
         Group getGroup = groupRepo.findById(paymentHistoryDto.getGroupId()).orElseThrow(() -> new ResourceNotFoundException("getGroup"));
+        Date date = new Date();
         PaymentHistory paymentHistory = PaymentHistory.builder()
                 .user(user)
                 .payTypeName(paymentHistoryDto.getPayType() == 1 ? PayTypeName.CASH : PayTypeName.CLICK)
@@ -51,8 +52,47 @@ public class PaymentHistoryService {
         myMessage.setUzName(paymentHistoryDto.getName());
         myMessage.setRuName(paymentHistoryDto.getName());
         Wallet walletByUserId = walletRepo.findWalletByUserId(user.getId());
-        double v = paymentHistoryDto.getHowMuch() > getGroup.getCourse().getCoursePrice() ? paymentHistoryDto.getHowMuch() - getGroup.getCourse().getCoursePrice() : 0;
-        walletByUserId.setBalance(walletByUserId.getBalance() + v);
+        double qoldiqSumma = 0;
+        double summa = 0;
+        List<PaymentHistory> paymentHistoriesByUserId = paymentHistoryRepo.findPaymentHistoriesByUserId(paymentHistoryDto.getPupilId());
+        if (!paymentHistoriesByUserId.isEmpty()) {
+            for (PaymentHistory history : paymentHistoriesByUserId) {
+                if (history.getHowTime().getMonth() == date.getMonth()) {
+                    if (history.getGroup().getId().equals(paymentHistoryDto.getGroupId())) {
+                        if (paymentHistoryDto.getHowMuch() >= history.getQoldiq()) {
+                            summa = paymentHistoryDto.getHowMuch() - history.getQoldiq();
+                            qoldiqSumma = 0;
+                        }else {
+                            qoldiqSumma = history.getQoldiq() - paymentHistoryDto.getHowMuch();
+                        }
+                    }else {
+                        if (paymentHistoryDto.getHowMuch() >= getGroup.getCourse().getCoursePrice()){
+                            qoldiqSumma = 0;
+                            summa = paymentHistoryDto.getHowMuch() - getGroup.getCourse().getCoursePrice();
+                        }else {
+                            qoldiqSumma = getGroup.getCourse().getCoursePrice() - paymentHistoryDto.getHowMuch();
+                        }
+                    }
+                }else {
+                    if (paymentHistoryDto.getHowMuch() >= getGroup.getCourse().getCoursePrice()){
+                        qoldiqSumma = 0;
+                        summa = paymentHistoryDto.getHowMuch() - getGroup.getCourse().getCoursePrice();
+                    }else {
+                        qoldiqSumma = getGroup.getCourse().getCoursePrice() - paymentHistoryDto.getHowMuch();
+                    }
+                }
+            }
+        }else {
+            if (paymentHistoryDto.getHowMuch() >= getGroup.getCourse().getCoursePrice()){
+                qoldiqSumma = 0;
+                summa = paymentHistoryDto.getHowMuch() - getGroup.getCourse().getCoursePrice();
+            }else {
+                qoldiqSumma = getGroup.getCourse().getCoursePrice() - paymentHistoryDto.getHowMuch();
+            }
+        }
+        paymentHistory.setQoldiq(qoldiqSumma);
+        paymentHistory.setGroup(getGroup);
+        walletByUserId.setBalance(walletByUserId.getBalance() + summa);
         walletRepo.save(walletByUserId);
         AllStatisticForPupil allStatisticForPupilByUserId = allStaticForPupilRepo.findAllStatisticForPupilByUserId(paymentHistoryDto.getPupilId());
         allStatisticForPupilByUserId.setAllSum(allStatisticForPupilByUserId.getAllSum() + paymentHistoryDto.getHowMuch());
@@ -62,24 +102,28 @@ public class PaymentHistoryService {
         return new ApiResponse("Ushbu o'quvchi accounti activlashtirildi", true);
     }
 
-    public List<PaymentHistoryDto> getLastMonthPayment(UUID pupilId) {
+    public List<PaymentHistory> getLastMonthPayment(UUID pupilId) {
         Date date = new Date();
-        List<PaymentHistoryDto> paymentHistoryDtos = new ArrayList<>();
+        List<PaymentHistory> paymentHistories = new ArrayList<>();
         List<PaymentHistory> paymentHistoriesByUserId = paymentHistoryRepo.findPaymentHistoriesByUserId(pupilId);
         if (!paymentHistoriesByUserId.isEmpty()) {
             for (PaymentHistory paymentHistory : paymentHistoriesByUserId) {
                 if (date.getMonth() == paymentHistory.getHowTime().getMonth()) {
-                    PaymentHistoryDto build = PaymentHistoryDto.builder()
+                    PaymentHistory build = PaymentHistory.builder()
                             .payTypeName(paymentHistory.getPayTypeName())
-                            .historyId(paymentHistory.getId())
                             .howMuch(paymentHistory.getHowMuch())
                             .howTime(paymentHistory.getHowTime())
+                            .user(paymentHistory.getUser())
+                            .qoldiq(paymentHistory.getQoldiq())
+                            .group(paymentHistory.getGroup())
                             .build();
-                    paymentHistoryDtos.add(build);
+                    build.setId(paymentHistory.getId());
+                    paymentHistories.add(build);
                 }
             }
-        return paymentHistoryDtos;
+            return paymentHistories;
         }
         return null;
     }
+
 }

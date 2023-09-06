@@ -18,6 +18,8 @@ public class PaymentHistory extends AbsEntity {
     @Column
     private Double howMuch; // qancha to'lov qildi
 
+    @Column Double qoldiq; // to'lov qilganda qolib ketgan summa agar to'lov to'liq qilinmagan
+
     @Column
     private Date howTime; // qachon to'lov qildi
 
@@ -26,5 +28,8 @@ public class PaymentHistory extends AbsEntity {
 
     @ManyToOne
     private User user; // to'lov qilgan shahs
+
+    @ManyToOne
+    public Group group; // qaysi gruhga to'lov qilgani
 
 }

@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface PaymentHistoryRepo extends JpaRepository<PaymentHistory, UUID> {
 
     List<PaymentHistory> findPaymentHistoriesByUserId(UUID user_id);
+
+    List<PaymentHistory> findPaymentHistoriesByGroupId(UUID group_id);
 }

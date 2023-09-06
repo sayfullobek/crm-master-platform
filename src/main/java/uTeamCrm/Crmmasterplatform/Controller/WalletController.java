@@ -9,6 +9,7 @@ import uTeamCrm.Crmmasterplatform.Repository.AuthRepository;
 import uTeamCrm.Crmmasterplatform.Repository.WalletRepo;
 import uTeamCrm.Crmmasterplatform.entity.Wallet;
 import uTeamCrm.Crmmasterplatform.pyload.ApiResponse;
+import uTeamCrm.Crmmasterplatform.service.WalletService;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class WalletController {
     private final WalletRepo walletRepo;
 
+    private final WalletService walletService;
     @GetMapping("/{id}")
     public HttpEntity<?> getOneWallet(@PathVariable UUID id) {
         Wallet walletByUserId = walletRepo.findWalletByUserId(id);
@@ -31,5 +33,17 @@ public class WalletController {
         getWallet.setFrozen(true);
         walletRepo.save(getWallet);
         return ResponseEntity.ok(new ApiResponse("muzlatildi", true));
+    }
+
+    @GetMapping("/howMuch")
+    public HttpEntity<?> getHowMuch(@RequestParam(name = "pupilId") UUID pupilId, @RequestParam(name = "groupId")UUID groupId){
+        ApiResponse howMuch = walletService.getHowMuch(pupilId, groupId);
+        return ResponseEntity.status(howMuch.isSuccess() ? 200 : 409).body(howMuch);
+    }
+
+    @PutMapping
+    public HttpEntity<?> payWithWallet(@RequestParam(name = "groupId")UUID groupId, @RequestParam(name = "pupilId")UUID pupilId){
+        ApiResponse apiResponse = walletService.payWithWallet(groupId, pupilId);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
     }
 }

@@ -12,6 +12,8 @@ import uTeamCrm.Crmmasterplatform.pyload.ApiResponse;
 import uTeamCrm.Crmmasterplatform.pyload.PaymentHistoryDto;
 import uTeamCrm.Crmmasterplatform.service.PaymentHistoryService;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,8 +46,20 @@ public class PaymentHistoryController {
 
     @GetMapping("/lastMonth/{id}")
     public HttpEntity<?> getLastMonth(@PathVariable UUID id){
-        List<PaymentHistoryDto> lastMonthPayment = paymentHistoryService.getLastMonthPayment(id);
+        List<PaymentHistory> lastMonthPayment = paymentHistoryService.getLastMonthPayment(id);
         return ResponseEntity.ok(lastMonthPayment);
     }
 
+    @GetMapping("/pastMonth/{id}")
+    public HttpEntity<?> getPastMonth(@PathVariable UUID id){
+        List<PaymentHistory> paymentHistories = paymentHistoryRepo.findPaymentHistoriesByUserId(id);
+        List<PaymentHistory> paymentHistories1 = new ArrayList<>();
+        Date date = new Date();
+        for (PaymentHistory paymentHistory : paymentHistories) {
+            if (date.getMonth() - 1 == paymentHistory.getHowTime().getMonth()){
+                paymentHistories1.add(paymentHistory);
+            }
+        }
+        return ResponseEntity.ok(paymentHistories1);
+    }
 }

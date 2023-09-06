@@ -120,7 +120,7 @@ public class GroupService {
         for (PupilSelectDto pupil : pupils) {
             User user = authRepository.findById(pupil.getValue()).orElseThrow(() -> new ResourceNotFoundException("getPupil"));
             for (Course cours : user.getCourses()) {
-                if (cours.equals(getGroup.getCourse())){
+                if (cours.equals(getGroup.getCourse())) {
                     users.add(user);
                     TotalLessonAndDailyFee dailyFee = getDailyFee(getGroup, getGroup.getCourse());
                     AllStatisticForPupil allStatisticForPupilByUserId = allStaticForPupilRepo.findAllStatisticForPupilByUserId(pupil.getValue());
@@ -133,7 +133,8 @@ public class GroupService {
                         allStaticForPupilRepo.save(allStatisticForPupilByUserId);
                     }
                     apiResponse = new ApiResponse("gruhga o'quvchilar  saqlandi", true);
-                }else {
+                    break;
+                } else {
                     apiResponse = new ApiResponse(user.getName() + " ismli o'quvchini ushbu guruhga qo'shib bo'lmaydi. sababi ushbu o'quvchi gruhda bo'ladigan kursni sotib olmagan", false);
                 }
             }
@@ -156,7 +157,7 @@ public class GroupService {
         double dailyFee = 0;
         Calendar instance = Calendar.getInstance();
         int size = getGroup.getWeekDays().size();
-        int actualMaximum = instance.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int actualMaximum = instance.getActualMaximum(Calendar.DAY_OF_MONTH );
         int hafta = actualMaximum / 7;
         int qoldiqKun = actualMaximum % 7;
         int darslarSoni = size * hafta;

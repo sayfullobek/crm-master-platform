@@ -2,9 +2,11 @@ package uTeamCrm.Crmmasterplatform.Controller;
 
 import com.sun.source.doctree.IndexTree;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.ResourceAccessException;
 import uTeamCrm.Crmmasterplatform.Repository.GroupRepo;
 import uTeamCrm.Crmmasterplatform.entity.Group;
 import uTeamCrm.Crmmasterplatform.pyload.ApiResponse;
@@ -29,6 +31,12 @@ public class GroupController {
     public HttpEntity<?> getGroup(){
         List<Group> all = groupRepo.findAll();
         return ResponseEntity.ok(all);
+    }
+
+    @GetMapping("/{id}")
+    public HttpEntity<?> getOne(@PathVariable UUID id){
+        Group getGroup = groupRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("getGroup"));
+        return ResponseEntity.ok(getGroup);
     }
 
     @GetMapping("/teacher/{id}")

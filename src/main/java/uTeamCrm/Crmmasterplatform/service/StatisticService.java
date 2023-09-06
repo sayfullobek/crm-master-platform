@@ -1,12 +1,10 @@
 package uTeamCrm.Crmmasterplatform.service;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uTeamCrm.Crmmasterplatform.Repository.*;
 import uTeamCrm.Crmmasterplatform.entity.AllStatisticForPupil;
 import uTeamCrm.Crmmasterplatform.entity.PaymentHistory;
-import uTeamCrm.Crmmasterplatform.entity.Wallet;
 import uTeamCrm.Crmmasterplatform.pyload.StatisticDto;
 
 import java.util.Date;
@@ -16,15 +14,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StatisticService {
 
-    private final StudentDailyStatisticsRepo studentDailyStatisticsRepo;
-
-    private final MonthlyStatisticsRepo monthlyStatisticsRepo;
-
     private final AllStaticForPupilRepo allStaticForPupilRepo;
-
-    private final WalletRepo walletRepo;
-
-    private final AuthRepository authRepository;
 
     private final PaymentHistoryRepo paymentHistoryRepo;
 
